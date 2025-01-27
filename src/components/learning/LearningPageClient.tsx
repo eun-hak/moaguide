@@ -14,9 +14,10 @@ import SubscriptionBanner from './SubscriptionBanner';
 import { dropdownOptions } from '@/utils/dropdownOptions';
 import { OverviewResponse, Content } from '@/types/learning'; 
 import { fetchContentsWithPage } from '@/factory/Article/GetArticle';
+import { resetSessionValues } from '@/utils/resetSessionValues';
 
 const LearningPageClient = ({ initialData }: { initialData: OverviewResponse }) => {
-  // 브라우저에서 sessionStorage 값을 초기화
+
   const [selectedType, setSelectedType] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [page, setPage] = useState<number>(1);
@@ -50,9 +51,7 @@ const LearningPageClient = ({ initialData }: { initialData: OverviewResponse }) 
     setSelectedCategory('');
     setPage(1);
     setActiveDropdown(null);
-    if (typeof window !== 'undefined') {
-      sessionStorage.clear();
-    }
+    resetSessionValues();
   };
 
   const handleTypeChange = (value: string) => {
@@ -78,6 +77,7 @@ const LearningPageClient = ({ initialData }: { initialData: OverviewResponse }) 
           likedByMe: item.likedByMe,
         }))
       : [];
+
   return (
     <div>
       <div className="relative w-full h-[300px] lg:h-[400px]">

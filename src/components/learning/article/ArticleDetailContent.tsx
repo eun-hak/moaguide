@@ -1,10 +1,11 @@
-import { getValidImageSrc } from "@/utils/checkImageProperty";
-import Image from "next/image";
-import Link from "next/link";
+'use client';
+
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { getValidImageSrc } from "@/utils/checkImageProperty";
 
 interface ContentProps {
-  text?: string; 
+  text?: string;
   title: string;
   paywallUp?: string;
   createdAt: string;
@@ -13,13 +14,27 @@ interface ContentProps {
 }
 
 const ArticleDetailContent = ({ text, title, paywallUp, createdAt, authorName, imgLink }: ContentProps) => {
-  const isPremium = !!paywallUp; 
-  const formattedPaywallUp = paywallUp ? paywallUp.split("\n") : [];
+  const isPremium = !!paywallUp;
   const router = useRouter();
 
   const handleAccesstion = () => {
     router.push('/payment');
-  }
+  };
+
+  const parseHtmlContent = (htmlContent: string): string => {
+    if (!htmlContent) return "";
+
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(htmlContent, "text/html");
+      return doc.body.innerHTML; 
+    } catch (error) {
+      console.error("HTML 파싱 중 오류 발생:", error);
+      return htmlContent; 
+    }
+  };
+
+  const parsedContent = paywallUp ? parseHtmlContent(paywallUp) : null;
 
   return (
     <div className="max-w-[1000px] w-[90%] mx-auto my-10">
@@ -34,21 +49,12 @@ const ArticleDetailContent = ({ text, title, paywallUp, createdAt, authorName, i
       />
       {isPremium ? (
         <>
-          <article className="mt-8 text-black text-[22px] font-semibold font-['Pretendard'] leading-[30.80px] tracking-wide relative">
-            {formattedPaywallUp.slice(0, 4).map((line, index) => (
-              <p key={index} className="mb-4">
-                {line}
-              </p>
-            ))}
-            <div className="relative">
-              {formattedPaywallUp.slice(4, 7).map((line, index) => (
-                <p key={index} className="mb-4 text-gray-400">
-                  {line}
-                </p>
-              ))}
-              <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white via-white/70 to-transparent pointer-events-none"></div>
-            </div>
-          </article>
+          <article
+            className="mt-8 text-black text-[22px] font-semibold font-['Pretendard'] leading-[30.80px] tracking-wide"
+            dangerouslySetInnerHTML={{
+              __html: parsedContent || "<p>프리미엄 콘텐츠를 준비 중입니다.</p>",
+            }}
+          />
           <div className="my-24 rounded-lg text-center flex flex-col items-center gap-4">
             <p
               className="text-center text-black font-semibold font-['Pretendard'] leading-[1.2] tracking-wide"
@@ -69,7 +75,7 @@ const ArticleDetailContent = ({ text, title, paywallUp, createdAt, authorName, i
             <div
               className="block w-[90%] max-w-[400px] py-6 px-8 bg-[#611cf2] text-white font-bold rounded-full transition text-center cursor-pointer hover:bg-[#4b10bf]"
               style={{
-                fontSize: 'clamp(18px, 3vw, 24px)', 
+                fontSize: 'clamp(18px, 3vw, 24px)',
               }}
               onClick={handleAccesstion}
             >
