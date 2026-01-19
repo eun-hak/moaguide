@@ -93,8 +93,17 @@ export default function RootLayout({
         content="N2QWerrLhGZ2wlJ_o4ebUAA0u2lFTUjHryP3Ya7Uji0"
       />
 
+      {/* Google AdSense */}
+      <meta name="google-adsense-account" content="ca-pub-1410200096892996" />
+
       {/* <link rel="icon" href="/moaguideLogo.svg" /> */}
       <body className={pretendard.className}>
+        <Script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1410200096892996"
+          crossOrigin="anonymous"
+          strategy="afterInteractive"
+        />
         {process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS ? (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS} />
         ) : null}
